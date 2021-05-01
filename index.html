@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh_cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="144x144" href="logo-144.png" />
+    <title>easyHolder - 纯前端占位图接口</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <header>
+        <p class="title">easy</p>
+        <p class="title">Holder</p>
+        <p class="subtitle">纯前端/可离线的占位图API</p>
+    </header>
+    <main>
+        <div class="info incomplete-support" style="display: none;">
+            ⚠你的浏览器仅支持svg格式的占位图生成。</div>
+        <div class="info not-support" style="display: none;">
+            ⚠你的浏览器不支持ServerWorker，无法使用easyHolder，请尝试使用Edge/Chrome等现代浏览器。</div>
+        <div class="info install-error" style="display: none;">
+            ⚠ServerWorker安装发生错误，下面是有关的错误信息
+            <pre class="error-detail"></pre>
+        </div>
+        <div class="info install-success" style="display: none;">
+            ✔安装成功，你现在可以正常使用占位图接口了！下面是使用说明。
+            <div class="doc">
+                <button class="forcereload" style="cursor: pointer;">强制重载</button>
+                <span>按下该按钮将重建缓存，结束后你可能需要手动刷新页面</span>
+                <hr>
+                <p>请求地址：<code>/:size[.:type]</code></p>
+                <p>请求方式：GET</p>
+                <h3 class="doc-header">
+                    参数</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th align="left">字段名</th>
+                            <th align="center">必填</th>
+                            <th align="center">数据类型</th>
+                            <th align="center">默认值</th>
+                            <th align="center">可选值</th>
+                            <th align="left">说明</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td align="left"><code>size</code></td>
+                            <td align="center"><code>是</code></td>
+                            <td align="center"><code>String</code></td>
+                            <td align="center">-</td>
+                            <td align="center">-</td>
+                            <td align="left">设置需要的占位图大小，格式<code>[宽度]x[高度]</code>或<code>[宽度]*[高度]</code>，格式有误将返回403。</td>
+                        </tr>
+                        <tr>
+                            <td align="left"><code>type</code></td>
+                            <td align="center"><code>否</code></td>
+                            <td align="center"><code>String</code></td>
+                            <td align="center"><code>webp</code></td>
+                            <td align="center">
+                                <code>png</code>，<code>webp</code>，<code>svg</code>，<code>jpg</code>，<code>jpeg</code>
+                            </td>
+                            <td align="left">设置需要的占位图类型，可选值以外的类型将返回404。</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3 class="doc-header">
+                    Querys</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th align="left">字段名</th>
+                            <th align="center">必填</th>
+                            <th align="center">数据类型</th>
+                            <th align="center">默认值</th>
+                            <th align="center">可选值</th>
+                            <th align="left">说明</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td align="left"><code>bg</code></td>
+                            <td align="center"><code>否</code></td>
+                            <td align="center"><code>String</code></td>
+                            <td align="center"><code>ccc</code></td>
+                            <td align="center">-</td>
+                            <td align="left">16进制的颜色代码，规定占位图的背景色。</td>
+                        </tr>
+                        <tr>
+                            <td align="left"><code>fg</code></td>
+                            <td align="center"><code>否</code></td>
+                            <td align="center"><code>Number</code></td>
+                            <td align="center"><code>666</code></td>
+                            <td align="center">-</td>
+                            <td align="left">16进制的颜色代码，规定占位图的文字颜色。</td>
+                        </tr>
+                        <tr>
+                            <td align="left"><code>text</code></td>
+                            <td align="center"><code>否</code></td>
+                            <td align="center"><code>String</code></td>
+                            <td align="center">-</td>
+                            <td align="center">-</td>
+                            <td align="left">提供展示在占位图中的文字，默认为图片尺寸大小</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3 class="doc-header">
+                    调用示例</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th align="left">示例</th>
+                            <th align="left">说明</th>
+                            <th align="left">结果</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td align="left"><code>/apis/imgholder/100x100</code></td>
+                            <td align="left">生成<code>100x100</code>的<code>webp</code>格式占位图。</td>
+                            <td align="left">
+                                <div .doc><img .doc src="/100x100" alt="错误" title="结果图片"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left"><code>/apis/imgholder/100x100.jpg</code></td>
+                            <td align="left">生成<code>100x100</code>的<code>jpg</code>格式占位图。</td>
+                            <td align="left">
+                                <div .doc><img .doc src="/100x100.jpg" alt="错误" title="结果图片"></div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left">
+                                <code>/apis/imgholder/100x100.png?bg=1e1e1e&amp;fg=adadad</code>
+                            </td>
+                            <td align="left">
+                                生成<code>100x100</code>的<code>png</code>格式占位图，且背景色为#1e1e1e，前景色为#adadad。
+                            </td>
+                            <td align="left">
+                                <div .doc><img .doc src="/100x100.png?bg=1e1e1e&amp;fg=adadad" alt="错误" title="结果图片">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="left"><code>/apis/imgholder/100x100.svg?text=测试</code></td>
+                            <td align="left">
+                                生成<code>100x100</code>的<code>svg</code>格式占位图，且展示文字为<code>测试</code>。
+                            </td>
+                            <td align="left">
+                                <div .doc><img .doc src="/100x100.svg?text=测试" alt="错误" title="结果图片"></div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <footer>
+        Coded by <a href="https://daidr.me" target="_blank">DaiDR</a> with <span>❤</span>.
+        <br>
+        <a href="https://github.com/daidr/easyHolder" target="_blank">Github</a>
+    </footer>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').then(function () {
+                if (!navigator.serviceWorker.controller) {
+                    location.reload();
+                }
+                if (!typeof OffscreenCanvas || typeof OffscreenCanvas == "undefined") {
+                    document.querySelector(".incomplete-support").style.display = "block";
+                }
+                document.querySelector(".install-success").style.display = "block";
+            }, function (err) {
+                document.querySelector(".error-detail").textContent = err;
+                document.querySelector(".install-error").style.display = "block";
+            });
+        } else {
+            document.querySelector(".not-support").style.display = "block";
+        }
+        document.querySelector(".forcereload").addEventListener("click", function () {
+            caches.keys().then(function (cacheNames) {
+                Promise.all(
+                    cacheNames.map(function (cacheName) {
+                        caches.delete(cacheName).then(()=> location.reload())
+                    })
+                );
+            })
+        })
+    </script>
+    <style>
+        html {
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            background: linear-gradient(#eef7ff, #fff) repeat-x top left;
+            background-size: 100% 300px;
+            min-height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header .title {
+            text-align: center;
+            font-size: 4em;
+            margin: 0;
+            color: #05b0ff;
+            text-shadow: 0 0 4px #7dbdff;
+        }
+
+        header .subtitle {
+            text-align: center;
+            font-size: 1em;
+            margin: 0;
+            color: #b9b9b9;
+            text-shadow: 0 0 4px #d0d0d0;
+        }
+
+        .info {
+            width: 90%;
+            margin: 10% auto;
+            font-size: 3em;
+            text-align: center;
+            color: #b9b9b9;
+            text-shadow: 0 0 4px #d0d0d0;
+        }
+
+        .error-detail {
+            font-size: 14px;
+            background: #fcfcfc;
+            white-space: normal;
+            text-shadow: none;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: left;
+            color: #ff5e5e;
+            max-width: 1000px;
+            margin: 20px auto;
+        }
+
+        * {
+            font-family: -apple-system, "Noto Sans", "Helvetica Neue", Helvetica, "Nimbus Sans L", Arial, "Liberation Sans",
+                "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Source Han Sans CN",
+                "Microsoft YaHei", "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei, "WenQuanYi Zen Hei Sharp",
+                sans-serif;
+            font-weight: 100;
+            box-sizing: border-box;
+        }
+
+        pre {
+            font-family: SimSun, serif;
+        }
+
+        .doc {
+            font-size: 16px;
+            background: #fff;
+            border: #d0d0d0 1px solid;
+            padding: 15px;
+            border-radius: 10px;
+            text-shadow: none;
+            color: #000;
+            text-align: left;
+            width: 70%;
+            margin: 30px auto;
+            overflow-x: auto;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .doc {
+                width: 100%;
+                padding: 5px;
+            }
+        }
+
+        .doc p {
+            margin: 15px 0;
+        }
+
+        .doc .doc-header {
+            font-size: 1.7rem;
+            margin: 40px 0 30px;
+        }
+
+        .doc code {
+            font-size: 90%;
+            background: rgb(226, 241, 255);
+            border-radius: 4px;
+            padding: 3px 5px;
+            color: rgb(116, 66, 16);
+        }
+
+        .doc table {
+            width: 100%;
+            border-spacing: 0;
+            border-collapse: separate;
+        }
+
+        .doc thead th:first-child {
+            border-left: 1px solid #eaeaea;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .doc thead th:last-child {
+            border-right: 1px solid #eaeaea;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .doc thead th {
+            color: #666;
+            background: #fafafa;
+            border-bottom: 1px solid #eaeaea;
+            border-top: 1px solid #eaeaea;
+            font-weight: 400;
+            font-size: 12px;
+            padding: 10px;
+        }
+
+        .doc table td,
+        .doc table th {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eaeaea;
+            text-align: left;
+        }
+
+        .doc table td {
+            line-height: 27px;
+        }
+
+        footer {
+            text-align: center;
+            margin: 20px;
+            transform: translateY(-20px);
+        }
+
+        footer a {
+            color: #b9b9b9;
+        }
+
+        footer span {
+            color: #ff5e5e;
+        }
+    </style>
+</body>
+
+</html>
